@@ -1,0 +1,4 @@
+Project Title: Real-Time Smart Security System
+Hardware Used: Asus TUF A15 (Ryzen 7, RTX 3050)
+IDE: Visual Studio Code
+Goal: To build a local application that detects objects and identifies registered users via webcam.
