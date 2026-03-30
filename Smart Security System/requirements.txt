@@ -1,0 +1,10 @@
+opencv-python 
+ultralytics
+fastapi
+uvicorn
+motor  #Async MongoDB drive
+pydantic #Data validation (turns your JSON schemas into Python objects).
+passlib  #For hashing passwords and generating secure JWT tokens for React.
+python-jose #For hashing passwords and generating secure JWT tokens for React.
+python-dotenv
+bcrypt<4.0.0

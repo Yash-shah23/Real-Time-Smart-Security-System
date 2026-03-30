@@ -1,0 +1,177 @@
+/* src/pages/Login/Login.css */
+.login-split-layout {
+    height: 100vh;
+    display: flex;
+    background-color: #0b1120;
+}
+
+.login-branding {
+    flex: 1.2;
+    /* Slightly wider branding side */
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5%;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle background glow for 3D feel */
+.login-branding::after {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: #3b82f6;
+    filter: blur(120px);
+    opacity: 0.1;
+    top: 10%;
+    left: 10%;
+}
+
+.login-branding h2 {
+    font-size: 3.5rem;
+    font-family: 'Outfit', sans-serif;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    z-index: 1;
+}
+
+.login-branding p {
+    color: #94a3b8;
+    font-size: 1.2rem;
+    max-width: 450px;
+    z-index: 1;
+}
+
+.login-form-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.form-wrapper {
+    width: 100%;
+    max-width: 400px;
+}
+
+.form-wrapper h3 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.form-wrapper p {
+    color: #94a3b8;
+    margin-bottom: 2.5rem;
+}
+
+/* Input Styling */
+.input-block {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.input-block label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #94a3b8;
+    margin-bottom: 0.6rem;
+    transition: color 0.2s;
+}
+
+.input-block:focus-within label {
+    color: #3b82f6;
+}
+
+.solid-input {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    color: white;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.solid-input:focus {
+    background: #0f172a;
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+/* Password Toggle Icon */
+.password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 2.3rem;
+    color: #64748b;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.password-toggle:hover {
+    color: #f8fafc;
+}
+
+/* Utilities */
+.form-utils {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    font-size: 0.85rem;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #94a3b8;
+    cursor: pointer;
+}
+
+.forgot-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.forgot-link:hover {
+    text-decoration: underline;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 1rem;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #1d4ed8;
+    transition: all 0.1s;
+}
+
+.btn-submit:hover:not(:disabled) {
+    background: #2563eb;
+}
+
+.btn-submit:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #1d4ed8;
+}
+
+.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

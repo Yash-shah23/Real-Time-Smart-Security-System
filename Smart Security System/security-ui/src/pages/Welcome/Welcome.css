@@ -1,0 +1,362 @@
+/* src/pages/Welcome/Welcome.css - FULL CONSOLIDATED FILE */
+
+/* =========================================
+   1. HEADER & NAVIGATION
+========================================= */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 5%;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(7, 11, 20, 0.85);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.brand-logo {
+    font-size: 1.8rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+}
+
+.brand-logo span {
+    color: var(--primary);
+}
+
+.nav-login-btn {
+    background: transparent;
+    color: white;
+    border: 1px solid var(--primary);
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.nav-login-btn:hover {
+    background: var(--primary);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+}
+
+/* =========================================
+   2. GLOBAL SECTION LAYOUTS
+========================================= */
+.section {
+    padding: 6rem 5%;
+}
+
+.section-dark {
+    background-color: var(--bg-dark);
+}
+
+.section-light {
+    background-color: var(--bg-light);
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 4rem auto;
+    font-size: 1.1rem;
+}
+
+/* =========================================
+   3. HERO SECTION (The Hook)
+========================================= */
+.hero-content {
+    margin-top: 5rem;
+    text-align: center;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero-content h1 {
+    font-size: 4.5rem;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(to right, #fff, #7dd3fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-desc {
+    font-size: 1.25rem;
+    color: var(--text-muted);
+    margin-bottom: 2.5rem;
+}
+
+/* =========================================
+   4. PROBLEM: TRADITIONAL VS SECUREAI
+========================================= */
+.comparison-container {
+    display: flex;
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+.compare-box {
+    flex: 1;
+    min-width: 300px;
+    padding: 2.5rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.compare-traditional {
+    background: rgba(239, 68, 68, 0.05);
+    border-top: 4px solid #ef4444;
+    /* Danger Red */
+}
+
+.compare-modern {
+    background: rgba(16, 185, 129, 0.05);
+    border-top: 4px solid #10b981;
+    /* Safe Green */
+}
+
+.compare-box ul {
+    list-style: none;
+    margin-top: 1.5rem;
+}
+
+.compare-box li {
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: var(--text-muted);
+}
+
+/* =========================================
+   5. ARCHITECTURE: HOW IT WORKS TIMELINE
+========================================= */
+.timeline {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    gap: 2rem;
+}
+
+/* The connecting line behind the numbers */
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.1);
+    z-index: 0;
+}
+
+.step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.step-number {
+    width: 80px;
+    height: 80px;
+    background: var(--bg-dark);
+    border: 2px solid var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    margin: 0 auto 1.5rem auto;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+.step h3 {
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.step p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* =========================================
+   6. UNIQUE ADVANTAGE: INTERACTIVE CARDS
+========================================= */
+.difference-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.diff-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 2.5rem;
+    border-radius: 16px;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.4s;
+    cursor: pointer;
+}
+
+.diff-card:hover {
+    transform: translateY(-10px);
+    background: rgba(59, 130, 246, 0.08);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.diff-icon {
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+}
+
+.diff-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+/* =========================================
+   7. VIDEO CAROUSEL DEMONSTRATION
+========================================= */
+.carousel-container {
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+    background: #000;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.video-wrapper {
+    width: 100%;
+    aspect-ratio: 16/9;
+    position: relative;
+}
+
+.demo-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.carousel-controls {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 1.5rem;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.carousel-info h3 {
+    margin-bottom: 0.2rem;
+}
+
+.carousel-info p {
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+.carousel-btns button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.carousel-btns button:hover {
+    background: var(--primary);
+}
+
+/* =========================================
+   8. REAL WORLD USERS GRID
+========================================= */
+.users-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.user-card {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.user-card h3 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+/* =========================================
+   9. FOOTER
+========================================= */
+.main-footer {
+    background: #04070c;
+    padding: 4rem 5% 2rem;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer-text {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+/* =========================================
+   10. RESPONSIVE DESIGN (For smaller screens)
+========================================= */
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 3rem;
+    }
+
+    .timeline {
+        flex-direction: column;
+        gap: 3rem;
+    }
+
+    /* Hide the connecting line on mobile */
+    .timeline::before {
+        display: none;
+    }
+
+    .comparison-container {
+        flex-direction: column;
+    }
+}

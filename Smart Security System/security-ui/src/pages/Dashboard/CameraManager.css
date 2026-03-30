@@ -1,0 +1,744 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap');
+
+/* ==========================================
+   1. GLOBAL MATRIX DASHBOARD
+========================================== */
+.matrix-root {
+    padding: 40px;
+    background: #020617;
+    min-height: 100vh;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+}
+
+.matrix-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 50px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 20px;
+}
+
+.matrix-title {
+    font-size: 2.8rem;
+    font-weight: 900;
+    background: linear-gradient(to right, #fff, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+
+.system-status {
+    display: flex;
+    gap: 10px;
+}
+
+.status-pill {
+    background: rgba(59, 130, 246, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.green-glow {
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.blue-glow {
+    color: #3b82f6;
+}
+
+/* ==========================================
+   2. CAMERA GRID
+========================================== */
+.nodes-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 35px;
+}
+
+.camera-node-card {
+    background: #0b1120;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+.camera-node-card:hover {
+    transform: translateY(-8px);
+    border-color: #3b82f6;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+.video-viewport {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #000;
+}
+
+.video-viewport img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.9) contrast(1.1);
+}
+
+.viewport-overlay {
+    position: absolute;
+    inset: 0;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+.live-indicator {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    animation: pulse-red 1.5s infinite;
+}
+
+.node-info-bar {
+    padding: 18px 20px;
+    background: #0f172a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.text-content h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.text-content p {
+    margin: 4px 0 0;
+    color: #64748b;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.node-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-circ {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.btn-circ.primary:hover {
+    background: #3b82f6;
+}
+
+.btn-circ.danger:hover {
+    background: #ef4444;
+}
+
+.add-node-placeholder {
+    border: 2px dashed rgba(59, 130, 246, 0.2);
+    border-radius: 20px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.add-node-placeholder:hover {
+    background: rgba(59, 130, 246, 0.03);
+    border-color: #3b82f6;
+}
+
+.circle-plus {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #1e293b;
+    color: #3b82f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    transition: 0.3s;
+}
+
+.add-node-placeholder:hover .circle-plus {
+    background: #3b82f6;
+    color: #fff;
+    transform: scale(1.1) rotate(90deg);
+}
+
+/* ==========================================
+   3. SETUP WIZARD (Fixed Overlay)
+========================================== */
+.setup-wizard-overlay {
+    position: fixed;
+    inset: 0;
+    background: #020617;
+    display: flex;
+    z-index: 1000;
+}
+
+.setup-sidebar {
+    width: 380px;
+    padding: 30px;
+    border-right: 1px solid #1e293b;
+    background: #0b1120;
+    display: flex;
+    flex-direction: column;
+}
+
+.nav-back {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-bottom: 40px;
+}
+
+.nav-back:hover {
+    color: white;
+}
+
+.glow-text {
+    font-size: 2rem;
+    margin: 0;
+    color: white;
+}
+
+.subtitle {
+    color: #64748b;
+    margin-bottom: 30px;
+    font-size: 0.9rem;
+}
+
+.modern-input {
+    margin-bottom: 20px;
+}
+
+.modern-input label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #3b82f6;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.modern-input input {
+    width: 100%;
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 14px;
+    border-radius: 10px;
+    color: white;
+    font-family: inherit;
+}
+
+.modern-input input:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.geometry-card {
+    background: rgba(59, 130, 246, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+.geometry-card p {
+    margin: 0 0 5px 0;
+    color: #3b82f6;
+    font-size: 0.8rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.geometry-card small {
+    color: #94a3b8;
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+
+.btn-deploy {
+    width: 100%;
+    padding: 15px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: auto;
+}
+
+.btn-deploy:hover {
+    background: #2563eb;
+}
+
+.canvas-viewport {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.canvas-hint {
+    position: absolute;
+    top: 30px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px 20px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 10;
+    border: 1px solid #334155;
+}
+
+.interaction-layer {
+    position: relative;
+    width: 90%;
+    max-width: 1200px;
+    aspect-ratio: 16/9;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 2px solid #334155;
+    cursor: crosshair;
+}
+
+.interaction-layer video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.perimeter-box {
+    position: absolute;
+    border: 2px dashed #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    pointer-events: none;
+}
+
+.box-label {
+    position: absolute;
+    top: -25px;
+    left: -2px;
+    background: #ef4444;
+    padding: 4px 8px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: white;
+}
+
+/* ==========================================
+   4. MODAL & ALERT OVERLAYS
+========================================== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-content {
+    background: #0f172a;
+    width: 85%;
+    max-width: 1100px;
+    border-radius: 16px;
+    border: 1px solid #334155;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+    transition: all 0.3s ease;
+}
+
+/* Alert Animation */
+.modal-alert-active {
+    border: 2px solid #ef4444;
+    box-shadow: 0 0 50px rgba(239, 68, 68, 0.3);
+    animation: shake 0.4s infinite alternate;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    background: #020617;
+    border-bottom: 1px solid #1e293b;
+}
+
+.modal-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.modal-title h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: white;
+}
+
+.text-muted {
+    color: #64748b;
+    font-weight: 400;
+    font-size: 1.1rem;
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.close-btn:hover {
+    color: #ef4444;
+    transform: scale(1.1);
+}
+
+.modal-video-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-video-feed {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* The Red Opacity Zone inside Modal */
+.restricted-zone-overlay {
+    position: absolute;
+    background: rgba(239, 68, 68, 0.15);
+    /* Light red default */
+    border: 2px dashed rgba(239, 68, 68, 0.8);
+    pointer-events: none;
+    transition: all 0.3s;
+}
+
+/* Turns Darker when breached */
+.zone-breached {
+    background: rgba(239, 68, 68, 0.5);
+    border: 3px solid #ef4444;
+}
+
+.zone-text-tag {
+    background: #ef4444;
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    font-weight: 900;
+    position: absolute;
+    top: -30px;
+    left: -2px;
+    letter-spacing: 1px;
+}
+
+/* Big Warning Banner */
+.intruder-warning-banner {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #ef4444;
+    color: white;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 30px rgba(239, 68, 68, 0.5);
+    animation: pulse-red 1s infinite;
+}
+
+/* Animations */
+@keyframes pulse-red {
+    0% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+    }
+}
+
+@keyframes shake {
+    from {
+        transform: translateX(-2px);
+    }
+
+    to {
+        transform: translateX(2px);
+    }
+}
+/* ==========================================
+   5. HARDWARE CONNECTION WIZARD
+========================================== */
+.connection-wizard-card {
+    background: #0f172a;
+    width: 900px;
+    max-width: 95%;
+    border-radius: 16px;
+    border: 1px solid #334155;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.wizard-header {
+    padding: 20px 30px;
+    background: #020617;
+    border-bottom: 1px solid #1e293b;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wizard-header h2 {
+    margin: 0;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.wizard-body {
+    display: flex;
+    height: 450px;
+}
+
+.wizard-controls {
+    width: 45%;
+    padding: 30px;
+    background: #0b1120;
+    border-right: 1px solid #1e293b;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.hardware-tabs {
+    display: flex;
+    gap: 10px;
+    background: #1e293b;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.hw-tab {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.hw-tab.active {
+    background: #3b82f6;
+    color: white;
+}
+
+.instruction-box {
+    background: rgba(59, 130, 246, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.instruction-box h4 {
+    margin: 0 0 15px 0;
+    color: #3b82f6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.instruction-box ol {
+    margin: 0 0 15px 0;
+    padding-left: 20px;
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.instruction-box p {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.btn-test {
+    width: 100%;
+    padding: 12px;
+    background: #1e293b;
+    color: white;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-test:hover {
+    background: #334155;
+    border-color: #475569;
+}
+
+.status-banner {
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.status-idle {
+    background: #1e293b;
+    color: #94a3b8;
+}
+
+.status-connecting {
+    background: rgba(234, 179, 8, 0.1);
+    color: #eab308;
+    border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.status-connected {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.wizard-preview {
+    width: 55%;
+    background: #000;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview-placeholder {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.preview-placeholder video,
+.preview-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-signal {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #334155;
+    font-weight: 900;
+    letter-spacing: 2px;
+    gap: 10px;
+}
