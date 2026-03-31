@@ -1,0 +1,51 @@
+# --- Node / React ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+build/
+dist/
+
+# --- Python / FastAPI ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# --- AI / YOLO Models ---
+# Don't track large weights files
+*.pt
+*.onnx
+*.weights
+runs/
+
+# --- Environment / Secrets ---
+.env
+
+
+# --- Operating System ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# --- Project Specific ---
+# Ignore the buzzer or recorded videos if they are temporary
+*.mp4
+*.avi

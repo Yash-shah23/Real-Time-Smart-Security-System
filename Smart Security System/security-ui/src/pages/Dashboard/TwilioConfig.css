@@ -1,0 +1,202 @@
+/* TwilioConfig.css */
+
+.header-flex {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.api-status-pill {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #94a3b8;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #64748b;
+}
+
+.status-dot.online {
+    background: #10b981;
+    box-shadow: 0 0 10px #10b981;
+}
+
+.config-container {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.config-main {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.config-sidebar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.glass-card {
+    background: #0b1120;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 25px;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.input-with-icon {
+    display: flex;
+    align-items: center;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 0 12px;
+    gap: 10px;
+}
+
+.input-with-icon input {
+    background: transparent !important;
+    border: none !important;
+    padding: 12px 0 !important;
+}
+
+.input-with-icon svg {
+    color: #64748b;
+}
+
+/* Test Panel */
+.test-panel {
+    background: #1e293b;
+    padding: 25px;
+    border-radius: 16px;
+    border: 1px solid #334155;
+}
+
+.test-panel h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.test-panel p {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.btn-test-api {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-test-api.idle {
+    background: #334155;
+    color: white;
+}
+
+.btn-test-api.testing {
+    background: #eab308;
+    color: black;
+}
+
+.btn-test-api.success {
+    background: #10b981;
+    color: white;
+}
+
+.success-note {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #10b981;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.info-panel {
+    background: rgba(59, 130, 246, 0.05);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.info-panel h4 {
+    margin: 0 0 8px 0;
+    color: #3b82f6;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-panel p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    line-height: 1.4;
+}
+
+.sticky-action-bar {
+    position: fixed;
+    bottom: 0;
+    /* left: 260px; */
+    right: 0;
+    padding: 20px 40px;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid #1e293b;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-save-config {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}

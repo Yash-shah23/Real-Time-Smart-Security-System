@@ -1,0 +1,179 @@
+/* KnownFaces.css */
+
+.sub-page {
+    padding: 30px 40px;
+    color: #f8fafc;
+    animation: fadeIn 0.4s ease-out;
+}
+.nav-back {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid #334155;
+    color: #f8fafc;
+    padding: 10px 20px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 700;
+    transition: 0.3s;
+    backdrop-filter: blur(5px);
+}
+
+.nav-back:hover {
+    background: #1e293b;
+    color: white;
+    border-color: #475569;
+}
+.page-header {
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 1.5rem;
+}
+
+.page-header h2 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem 0;
+    color: #ffffff;
+}
+
+.page-header p {
+    color: #94a3b8;
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 500;
+}
+
+/* --- STATS & UPLOAD STRIP --- */
+.stats-strip {
+    margin-bottom: 2.5rem;
+}
+
+.stat-card {
+    background-color: #0b1120;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    border-color: #3b82f6;
+}
+
+.upload-card {
+    display: inline-flex;
+    align-items: center;
+    
+    gap: 1.5rem;
+    background-color: rgba(59, 130, 246, 0.05);
+    border: 1px dashed rgba(59, 130, 246, 0.4);
+}
+
+.hidden-input {
+    display: none;
+}
+
+.btn-primary {
+    background-color: #3b82f6;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: inline-block;
+}
+
+.btn-primary:hover {
+    background-color: #2563eb;
+}
+
+/* --- FACES GRID --- */
+.faces-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+
+.face-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.face-avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 3px solid #3b82f6;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+.face-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 0.4rem 0;
+    color: #f8fafc;
+}
+
+.face-role {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 1.5rem;
+    background: #1e293b;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* --- DELETE BUTTON --- */
+.icon-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.delete-btn {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.delete-btn:hover {
+    background-color: #ef4444;
+    color: white;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+/* --- ANIMATIONS --- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
