@@ -104,13 +104,13 @@
 }
 
 .live-indicator {
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(149, 10, 10, 0.6);
     backdrop-filter: blur(5px);
     padding: 5px 12px;
     border-radius: 6px;
     font-size: 0.7rem;
     font-weight: 900;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     width: fit-content;
     display: flex;
     align-items: center;

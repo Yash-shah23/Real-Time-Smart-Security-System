@@ -57,6 +57,7 @@ export default function Login() {
 
   return (
     <div className="login-split-layout">
+      
       {/* LEFT PANEL */}
       <div className="login-branding">
         <ShieldCheck
@@ -110,6 +111,7 @@ export default function Login() {
 
             <div className="input-block">
               <label>Secure Password</label>
+              
               <input
                 type={showPassword ? "text" : "password"}
                 className="solid-input"

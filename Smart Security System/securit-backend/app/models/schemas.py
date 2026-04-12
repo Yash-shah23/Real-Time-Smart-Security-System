@@ -1,76 +1,45 @@
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime
 
-# --- 1. USERS COLLECTION ---
+# --- USERS ---
 class UserCreate(BaseModel):
     name: str
     email: EmailStr
     password: str = Field(..., max_length=72, min_length=6)
     phone: str
 
+
 class UserInDB(BaseModel):
     id: str = Field(alias="_id")
     name: str
     email: EmailStr
-    password: str # Hashed
+    password: str
     phone: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
-# --- 2. CAMERAS COLLECTION ---
-class CameraModel(BaseModel):
-    id: Optional[str] = Field(None, alias="_id")
-    user_id: str
-    name: str
-    location: str
-    stream_url: str
-    created_at: datetime = Field(default_factory=datetime.utcnow)
 
-# --- 3. ZONES COLLECTION ---
+# --- CAMERA WITH EMBEDDED ZONE ---
 class Coordinates(BaseModel):
     x1: int
     y1: int
     x2: int
     y2: int
 
-class ZoneModel(BaseModel):
-    id: Optional[str] = Field(None, alias="_id")
-    camera_id: str
-    name: str
+
+class Zone(BaseModel):
+    name: str = "Restricted"
     coordinates: Coordinates
+    frame_width: Optional[int] = None
+    frame_height: Optional[int] = None
 
-# --- 4. KNOWN FACES COLLECTION ---
-class KnownFaceModel(BaseModel):
+
+class CameraModel(BaseModel):
     id: Optional[str] = Field(None, alias="_id")
     user_id: str
     name: str
-    image_path: str
-
-# --- 5. LOGS / EVENTS COLLECTION ---
-class LogEventModel(BaseModel):
-    id: Optional[str] = Field(None, alias="_id")
-    camera_id: str
-    zone_id: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
-    person_type: str # "known" or "unknown"
-    person_name: Optional[str] = None
-    snapshot_path: str
-    status: str # "alert" or "safe"
-
-# --- 6. ALERTS COLLECTION ---
-class AlertModel(BaseModel):
-    id: Optional[str] = Field(None, alias="_id")
-    user_id: str
-    log_id: str
-    message: str
-    sent_via: str # "sms", "email", "push"
-    status: str # "sent", "failed"
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
-
-
-# class ForgotPasswordRequest(BaseModel):
-#     email: EmailStr
-
-# class ResetPasswordUpdate(BaseModel):
-#     token: str
-#     new_password: str
+    location: str
+    stream_url: str
+    zone: Optional[Zone] = None
+    intruder_detected: bool = False
+    created_at: datetime = Field(default_factory=datetime.utcnow)

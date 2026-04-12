@@ -31,7 +31,7 @@ cameras_collection = db.get_collection("cameras")
 zones_collection = db.get_collection("zones")
 
 SECRET_KEY = "YOUR_SUPER_SECRET_KEY" # Move to .env for production
-ALGORITHM = "HS256"
+ALGORITHM = "ALGORITHM"
 
 # --- 2. SCHEMAS (Pydantic Models) ---
 class Coordinates(BaseModel):

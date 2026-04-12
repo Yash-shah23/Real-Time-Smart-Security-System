@@ -12,6 +12,7 @@ import SOSConfig from "./pages/Dashboard/SOSconfig";
 import TwilioConfig from "./pages/Dashboard/TwilioConfig";
 import SupportPage from "./pages/Dashboard/SupportPage";
 import HardwareInitialization from "./pages/Dashboard/HardwareInitialization";
+import CameraView from "./pages/Dashboard/CameraView.js";
 
 function App() {
   return (
@@ -27,8 +28,8 @@ function App() {
         <Route path="/dashboard/SOSconfig" element={<SOSConfig />} />
         <Route path="/dashboard/TwilioConfig" element={<TwilioConfig />} />
         <Route path="/SupportPage" element={<SupportPage />} />
-        <Route path="/dashboard/camera/new" element={<HardwareInitialization />}
-        />
+        <Route path="/dashboard/camera/new" element={<HardwareInitialization />} />
+        <Route path="/dashboard/camera/view/:id" element={<CameraView />} />
       </Routes>
     </Router>
   );

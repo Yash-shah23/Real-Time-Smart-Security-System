@@ -46,6 +46,7 @@ async def register_user(user: UserCreate):
         "message": "User registered successfully",
         "user_id": str(result.inserted_id)
     }
+    
 
 @router.post("/login")
 async def login_user(user_credentials: UserLogin):

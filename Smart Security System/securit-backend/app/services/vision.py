@@ -27,8 +27,8 @@ if cap is None:
 
 # 3. Define the Restricted Zone (Fetched from Dashboard later)
 # These will eventually be dynamic based on your React "Zone Drawing"
-zone_x1, zone_y1 = 150, 100
-zone_x2, zone_y2 = 500, 450
+zone_x1, zone_y1 = 550, 150
+zone_x2, zone_y2 = 50, 450
 
 # Target classes (0=Person)
 target_classes = [0] 

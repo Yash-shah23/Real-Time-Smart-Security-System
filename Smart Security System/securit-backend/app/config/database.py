@@ -18,3 +18,9 @@ zones_collection = db.get_collection("zones")
 faces_collection = db.get_collection("known_faces")
 logs_collection = db.get_collection("logs")
 alerts_collection = db.get_collection("alerts")
+
+
+async def create_indexes():
+    await cameras_collection.create_index("user_id")
+    await cameras_collection.create_index("intruder_detected")
+    await cameras_collection.create_index([("user_id", 1), ("created_at", -1)])

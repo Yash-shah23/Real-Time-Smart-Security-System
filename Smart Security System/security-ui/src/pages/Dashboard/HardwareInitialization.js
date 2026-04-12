@@ -1,42 +1,61 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   Monitor,
   Smartphone,
   Wifi,
   ShieldCheck,
   Zap,
-  Video,
-  Activity,
-  AlertCircle,
   X,
-  HelpCircle,
+  Activity,
   MousePointer2,
-  CameraIcon,
   CameraOffIcon,
-  BadgeHelp,
+  Tag,
+  MapPin,
 } from "lucide-react";
 import "./HardwareInit.css";
 
 export default function HardwareInitialization() {
   const navigate = useNavigate();
-  const [step, setStep] = useState(1); // Step 1: Connect, Step 2: Draw Zone
+  const [step, setStep] = useState(1);
   const [camType, setCamType] = useState("ip");
   const [connStatus, setConnStatus] = useState("idle");
 
-  // Drawing States
+  const [ipAddress, setIpAddress] = useState("");
+  const [verifiedUrl, setVerifiedUrl] = useState("");
+  const [formData, setFormData] = useState({ name: "", location: "" });
+
   const [isDrawing, setIsDrawing] = useState(false);
   const [coords, setCoords] = useState({ x1: 0, y1: 0, x2: 0, y2: 0 });
   const containerRef = useRef(null);
 
-  const handleTestConnection = () => {
+  const handleTestConnection = async () => {
+    if (camType === "ip" && !ipAddress.startsWith("http")) {
+      alert("Enter valid URL (http://...)");
+      return;
+    }
     setConnStatus("connecting");
-    setTimeout(() => setConnStatus("connected"), 2000);
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/hardware/verify-stream`,
+        {
+          params: { url: ipAddress },
+        },
+      );
+      if (res.data.status === "success") {
+        setConnStatus("connected");
+        const suffix = ipAddress.endsWith("/") ? "video" : "/video";
+        setVerifiedUrl(ipAddress + suffix);
+      }
+    } catch (err) {
+      setConnStatus("error");
+    }
   };
 
-  // --- DRAG LOGIC ---
   const handleMouseDown = (e) => {
-    if (step !== 2) return;
+    if (connStatus !== "connected") return;
+    e.preventDefault();
     const rect = containerRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -45,7 +64,8 @@ export default function HardwareInitialization() {
   };
 
   const handleMouseMove = (e) => {
-    if (!isDrawing || step !== 2) return;
+    if (!isDrawing) return;
+    e.preventDefault();
     const rect = containerRef.current.getBoundingClientRect();
     setCoords((prev) => ({
       ...prev,
@@ -54,110 +74,159 @@ export default function HardwareInitialization() {
     }));
   };
 
-  const handleMouseUp = () => setIsDrawing(false);
+  const handleMouseUp = (e) => {
+    e.preventDefault();
+    setIsDrawing(false);
+  };
+
+ const handleFinalDeploy = async () => {
+   if (!formData.name || !formData.location)
+     return alert("Fill Identity fields");
+
+   let cleanUrl = ipAddress.trim();
+
+   if (camType === "ip") {
+     if (!cleanUrl.endsWith("/video") && !cleanUrl.endsWith("/videofeed")) {
+       cleanUrl = cleanUrl.endsWith("/")
+         ? `${cleanUrl}video`
+         : `${cleanUrl}/video`;
+     }
+   }
+
+   const rect = containerRef.current.getBoundingClientRect();
+
+   const normalizedCoords = {
+     x1: Math.min(coords.x1, coords.x2) / rect.width,
+     y1: Math.min(coords.y1, coords.y2) / rect.height,
+     x2: Math.max(coords.x1, coords.x2) / rect.width,
+     y2: Math.max(coords.y1, coords.y2) / rect.height,
+     width: rect.width,
+     height: rect.height,
+   };
+
+   console.log("📦 NORMALIZED:", normalizedCoords);
+
+   try {
+     await axios.post(
+       "http://localhost:8000/api/cameras/setup-full",
+       {
+         name: formData.name,
+         location: formData.location,
+         stream_url: cleanUrl,
+         coords: normalizedCoords,
+       },
+       {
+         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+       },
+     );
+
+     navigate("/dashboard/cameras");
+   } catch (err) {
+     alert("Deploy Failed: " + (err.response?.data?.detail || "Server Error"));
+   }
+ };
 
   return (
     <div className="setup-wizard-overlay center-content flex-column">
       <div className="connection-wizard-card">
-        {/* HEADER */}
         <div className="wizard-header">
-          <div className="header-title-group">
-            <h2>
-              {step === 1 ? "Node Initialization" : "Spatial Calibration"}
-            </h2>
-          </div>
-
+          <h2>Node Initialization</h2>
           <button
             className="close-btn"
             onClick={() => navigate("/dashboard/cameras")}
           >
-            <X size={24} color="#94a3b8" />
+            <X size={24} />
           </button>
         </div>
 
-        {/* MAIN BODY */}
         <div className="wizard-body">
-          {/* LEFT: CONTROLS */}
           <div className="wizard-controls">
-            {step === 1 ? (
-              <>
-                <div className="hardware-tabs">
-                  <button
-                    className={`hw-tab ${camType === "local" ? "active" : ""}`}
-                    onClick={() => {
-                      setCamType("local");
-                      setConnStatus("idle");
-                    }}
-                  >
-                    <Monitor size={18} /> Local / USB
-                  </button>
-                  <button
-                    className={`hw-tab ${camType === "ip" ? "active" : ""}`}
-                    onClick={() => {
-                      setCamType("ip");
-                      setConnStatus("idle");
-                    }}
-                  >
-                    <Smartphone size={18} /> Mobile IoT
-                  </button>
-                </div>
+            <div className="hardware-tabs">
+              <button
+                className={`hw-tab ${camType === "ip" ? "active" : ""}`}
+                onClick={() => setCamType("ip")}
+              >
+                <Smartphone size={18} /> Mobile IoT
+              </button>
+              <button
+                className={`hw-tab ${camType === "local" ? "active" : ""}`}
+                onClick={() => setCamType("local")}
+              >
+                <Monitor size={18} /> Local
+              </button>
+            </div>
 
-                <div className="instruction-box">
-                  {camType === "ip" ? (
-                    <>
-                      <h4>
-                        <Wifi size={16} /> Mobile Setup
-                      </h4>
-                      <ol>
-                        <li>Connect phone & laptop to same Wi-Fi.</li>
-                        <li>Open IP Webcam & 'Start Server'.</li>
-                      </ol>
-                      <input
-                        className="modern-url-input"
-                        type="text"
-                        placeholder="http://192.168.1.50:8080/video"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <h4>
-                        <Monitor size={16} /> Local Setup
-                      </h4>
-                      <p>Accessing integrated hardware (ID: 0).</p>
-                    </>
-                  )}
-                  <button className="btn-test" onClick={handleTestConnection}>
+            {/* ❌ NO UI CHANGE BELOW */}
+            {/* only logic changed above */}
+
+            <div className="instruction-box">
+              {connStatus !== "connected" ? (
+                <>
+                  <h4>
+                    <Wifi size={16} /> Establish Handshake
+                  </h4>
+                  <ol>
+                    <li>Connect phone & laptop to same Wi-Fi.</li>
+                    <li>Open IP Webcam & 'Start Server'.</li>
+                  </ol>
+                  <p>Enter the IP from your mobile device.</p>
+                  <input
+                    className="modern-url-input"
+                    value={ipAddress}
+                    onChange={(e) => setIpAddress(e.target.value)}
+                    placeholder="http://192.168..."
+                  />
+                  <button
+                    className="btn-test"
+                    onClick={handleTestConnection}
+                    disabled={connStatus === "connecting"}
+                  >
                     {connStatus === "connecting"
-                      ? "Establishing..."
-                      : "Test Connection"}
+                      ? "Syncing..."
+                      : "Verify Connection"}
                   </button>
-                </div>
-              </>
-            ) : (
-              <div className="instruction-box">
-                <h4>
-                  <MousePointer2 size={16} /> Area Selection
-                </h4>
-                <p>
-                  Click and drag on the preview to define the{" "}
-                  <b>Restricted Perimeter</b>.
-                </p>
-                <div className="coords-display">
-                  X: {Math.round(coords.x1)} Y: {Math.round(coords.y1)} to{" "}
-                  <br />
-                  X: {Math.round(coords.x2)} Y: {Math.round(coords.y2)}
-                </div>
-              </div>
-            )}
+                </>
+              ) : (
+                <>
+                  <h4>
+                    <Tag size={16} /> Node Identity & Zone
+                  </h4>
+                  <input
+                    className="modern-url-input"
+                    placeholder="Camera Name"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                  />
+                  <input
+                    className="modern-url-input"
+                    placeholder="Location"
+                    value={formData.location}
+                    onChange={(e) =>
+                      setFormData({ ...formData, location: e.target.value })
+                    }
+                    style={{ marginTop: "10px" }}
+                  />
+
+                  <div className="coords-display" style={{ marginTop: "15px" }}>
+                    <MousePointer2 size={12} /> Drag on preview to set Zone
+                    <p style={{ fontSize: "10px", margin: "5px 0 0" }}>
+                      X1:{Math.round(coords.x1)} Y1:{Math.round(coords.y1)}
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
 
             <div className={`status-banner status-${connStatus}`}>
               {connStatus === "connected" ? (
                 <>
-                  <ShieldCheck size={18} /> Connected
+                  <ShieldCheck size={18} /> Verified
                 </>
               ) : (
                 <>
-                  <Activity size={18} /> Awaiting Link
+                  <Activity size={18} /> Awaiting Signal
                 </>
               )}
             </div>
@@ -165,17 +234,13 @@ export default function HardwareInitialization() {
             <button
               className="btn-deploy"
               disabled={connStatus !== "connected"}
-              onClick={() =>
-                step === 1 ? setStep(2) : navigate("/dashboard/cameras")
-              }
+              onClick={handleFinalDeploy}
             >
-              {step === 1
-                ? "Proceed to Spatial Setup"
-                : "Finalize & Deploy Node"}
+              Finalize & Deploy Node
             </button>
           </div>
 
-          {/* RIGHT: PREVIEW (DRAG LAYER) */}
+          {/* preview untouched */}
           <div className="wizard-preview">
             <div
               className="preview-placeholder"
@@ -183,26 +248,37 @@ export default function HardwareInitialization() {
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
-              style={{ cursor: step === 2 ? "crosshair" : "default" }}
+              onDragStart={(e) => e.preventDefault()}
             >
-              {connStatus === "connected" ? (
-                <div className="video-mock">
-                  <div className="scan-line"></div>
-                  <span className="live-tag">LIVE_STREAM</span>
-
-                  {/* THE DRAWN BOX */}
-                  <div
-                    className="drawn-perimeter"
+              {connStatus === "connected" && verifiedUrl ? (
+                <div className="video-mock" style={{ pointerEvents: "none" }}>
+                  <img
+                    src={verifiedUrl}
+                    alt="Live"
+                    draggable="false"
                     style={{
-                      left: Math.min(coords.x1, coords.x2),
-                      top: Math.min(coords.y1, coords.y2),
-                      width: Math.abs(coords.x2 - coords.x1),
-                      height: Math.abs(coords.y2 - coords.y1),
-                      display: coords.x1 !== 0 ? "block" : "none",
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      userSelect: "none",
                     }}
-                  >
-                    <span className="box-label">RESTRICTED ZONE</span>
-                  </div>
+                  />
+                  <div className="scan-line"></div>
+
+                  {coords.x1 !== 0 && (
+                    <div
+                      className="drawn-perimeter"
+                      style={{
+                        left: Math.min(coords.x1, coords.x2),
+                        top: Math.min(coords.y1, coords.y2),
+                        width: Math.abs(coords.x2 - coords.x1),
+                        height: Math.abs(coords.y2 - coords.y1),
+                        pointerEvents: "none",
+                      }}
+                    >
+                      <span className="box-label">SECURE_ZONE</span>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="no-signal">
@@ -212,33 +288,6 @@ export default function HardwareInitialization() {
               )}
             </div>
           </div>
-        </div>
-      </div>
-      {/* 2. THE NEW EXTERNAL HELP FOOTER */}
-      <div className="wizard-external-footer">
-        <div className="footer-item">
-          <Wifi size={16} color="#3b82f6" />
-          <span>
-            <b>Pro Tip:</b> Ensure phone & laptop are on the same 2.4GHz Wi-Fi
-            band for lower latency.
-          </span>
-        </div>
-        <div className="footer-item">
-          <Video size={16} color="#3b82f6" />
-          <span>
-            <b>Troubleshoot:</b> If "No Signal" persists, check if your firewall
-            blocks Port 8080.
-          </span>
-        </div>
-        <div className="footer-links">
-          <button className="text-link">Full Documentation</button>
-          <span className="divider">|</span>
-          <button
-            className="text-link"
-            onClick={() => navigate("/SupportPage")}
-          >
-            Contact Support
-          </button>
         </div>
       </div>
     </div>

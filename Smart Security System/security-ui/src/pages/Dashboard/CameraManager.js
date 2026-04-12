@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Plus,
   MapPin,
@@ -6,7 +7,6 @@ import {
   Trash2,
   Activity,
   X,
-  Smartphone,
   Wifi,
   ChevronLeft,
   ChevronRight,
@@ -15,24 +15,48 @@ import "./CameraManager.css";
 import { useNavigate } from "react-router-dom";
 
 export default function CameraManager() {
+  const navigate = useNavigate();
   const [showInstructions, setShowInstructions] = useState(false);
 
-  const navigate = useNavigate();
-  // Dummy cameras (no backend)
-  const cameras = [
-    {
-      _id: "1",
-      name: "Front Gate",
-      location: "Entrance",
-    },
-    {
-      _id: "2",
-      name: "Office Cam",
-      location: "Main Hall",
-    },
-  ];
+  // --- DYNAMIC DATA STATE ---
+  const [cameras, setCameras] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  
+  const API_BASE = "http://localhost:8000/api/cameras";
+
+  // --- FETCH CAMERAS FROM BACKEND ---
+  const fetchCameras = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${API_BASE}/all`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setCameras(res.data);
+    } catch (err) {
+      console.error("Matrix Sync Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCameras();
+  }, []);
+
+  // --- DELETE NODE LOGIC ---
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to decommission this node?"))
+      return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${API_BASE}/delete/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchCameras(); // Refresh list
+    } catch (err) {
+      alert("Failed to delete node.");
+    }
+  };
 
   return (
     <div className="matrix-root">
@@ -40,6 +64,7 @@ export default function CameraManager() {
       <button className="nav-back" onClick={() => navigate("/dashboard")}>
         <ChevronLeft size={18} /> Back to Dashboard
       </button>
+
       <header className="matrix-header">
         <div className="brand">
           <h1 className="matrix-title">Surveillance Matrix</h1>
@@ -47,7 +72,7 @@ export default function CameraManager() {
         </div>
         <div className="system-status">
           <div className="status-pill green-glow">
-            <Activity size={14} /> Core: Online
+            <Activity size={14} /> Core: {loading ? "Syncing..." : "Online"}
           </div>
           <div className="status-pill blue-glow">
             Active Nodes: {cameras.length}/05
@@ -60,12 +85,20 @@ export default function CameraManager() {
         {cameras.map((cam) => (
           <div key={cam._id} className="camera-node-card">
             <div className="video-viewport">
+              {/* Pointing to your YOLO FastAPI Stream */}
               <img
-                src="https://via.placeholder.com/640x360/0a0a0a/3b82f6?text=CAMERA"
-                alt="Camera"
+                src={`${API_BASE}/stream/${cam._id}`}
+                alt={cam.name}
+                className="matrix-stream-render"
+                onError={(e) => {
+                  e.target.src =
+                    "https://via.placeholder.com/640x360/0a0a0a/3b82f6?text=NODE_OFFLINE";
+                }}
               />
               <div className="viewport-overlay">
-                <span className="live-indicator">LIVE</span>
+                <span className="live-indicator">
+                  <span className="pulse-dot"></span> LIVE
+                </span>
               </div>
             </div>
 
@@ -78,10 +111,16 @@ export default function CameraManager() {
               </div>
 
               <div className="node-actions">
-                <button className="btn-circ primary">
+                <button
+                  className="btn-circ primary"
+                  onClick={() => navigate(`/dashboard/camera/view/${cam._id}`)}
+                >
                   <Maximize2 size={16} />
                 </button>
-                <button className="btn-circ danger">
+                <button
+                  className="btn-circ danger"
+                  onClick={() => handleDelete(cam._id)}
+                >
                   <Trash2 size={16} />
                 </button>
               </div>
@@ -89,17 +128,19 @@ export default function CameraManager() {
           </div>
         ))}
 
-        {/* ADD NODE */}
-        <div
-          className="add-node-placeholder"
-          onClick={() => setShowInstructions(true)}
-        >
-          <div className="circle-plus">
-            <Plus size={32} />
+        {/* ADD NODE PLACEHOLDER */}
+        {!loading && cameras.length < 5 && (
+          <div
+            className="add-node-placeholder"
+            onClick={() => setShowInstructions(true)}
+          >
+            <div className="circle-plus">
+              <Plus size={32} />
+            </div>
+            <h3>Initialize Node</h3>
+            <span>Connect Camera</span>
           </div>
-          <h3>Initialize Node</h3>
-          <span>Connect Camera</span>
-        </div>
+        )}
       </div>
 
       {/* INSTRUCTION POPUP */}
@@ -108,20 +149,28 @@ export default function CameraManager() {
           <div className="modal-content">
             <div className="modal-header">
               <h3>Connect Mobile Camera</h3>
-              <button onClick={() => setShowInstructions(false)}>
+              <button
+                className="close-x"
+                onClick={() => setShowInstructions(false)}
+              >
                 <X size={24} />
               </button>
             </div>
 
-            <div style={{ padding: "20px" }}>
-              <h4>
-                <Wifi size={16} /> Steps:
-              </h4>
+            <div className="instruction-modal-body">
+              <div className="wifi-icon-container">
+                <Wifi size={48} color="#3b82f6" />
+                Setup
+              </div>
               <ol>
                 <li>Connect phone & laptop to same Wi-Fi</li>
-                <li>Install IP Webcam app</li>
-                <li>Start server</li>
-                <li>Copy IP address</li>
+                <li>
+                  Install <b>IP Webcam</b> app on Android
+                </li>
+                <li>
+                  Tap <b>'Start Server'</b> in the app
+                </li>
+                <li>Note down the IP address shown on screen</li>
               </ol>
 
               <button
