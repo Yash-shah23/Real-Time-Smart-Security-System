@@ -132,6 +132,7 @@ async def get_zone_by_camera(camera_id: str):
         return zone
     raise HTTPException(status_code=404, detail="Zone not found for this camera")
 
+
 # --- 5. SERVER RUNNER ---
 if __name__ == "__main__":
     import uvicorn

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import {
   Search,
   Filter,
@@ -8,56 +9,33 @@ import {
   LogIn,
   HardDrive,
   ChevronLeft,
+  Image as ImageIcon,
 } from "lucide-react";
 import "./ActivityLogs.css";
 import { useNavigate } from "react-router-dom";
 
 export default function ActivityLogs() {
+  const navigate = useNavigate();
+  const [logs, setLogs] = useState([]);
 
-    const navigate = useNavigate();
-  // Mock data representing your System_Logs and Alerts collections
-  const [logs] = useState([
-    {
-      id: 1,
-      type: "intrusion",
-      event: "Human Detected",
-      location: "North Entrance",
-      time: "2026-03-31 10:15:22",
-      status: "Critical",
-    },
-    {
-      id: 2,
-      type: "system",
-      event: "Node Initialized",
-      location: "Lobby Cam 01",
-      time: "2026-03-31 09:45:10",
-      status: "Info",
-    },
-    {
-      id: 3,
-      type: "auth",
-      event: "User Login",
-      location: "Admin Panel",
-      time: "2026-03-31 08:30:05",
-      status: "Success",
-    },
-    {
-      id: 4,
-      type: "intrusion",
-      event: "Human Detected",
-      location: "Server Room",
-      time: "2026-03-31 02:12:45",
-      status: "Critical",
-    },
-    {
-      id: 5,
-      type: "system",
-      event: "Privacy Policy Accepted",
-      location: "Setup Wizard",
-      time: "2026-03-30 22:15:10",
-      status: "Info",
-    },
-  ]);
+  useEffect(() => {
+    const fetchLogs = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+          "http://localhost:8000/api/cameras/logs/all",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        setLogs(res.data);
+        console.log("LOGS RECEIVED FROM DB:", res.data);
+      } catch (err) {
+        console.error("Log fetch failed", err);
+      }
+    };
+    fetchLogs();
+  }, []);
 
   const getIcon = (type) => {
     switch (type) {
@@ -101,9 +79,10 @@ export default function ActivityLogs() {
             <tr>
               <th>Type</th>
               <th>Event</th>
-              <th>Location / Source</th>
+              <th>Location</th>
               <th>Timestamp</th>
               <th>Status</th>
+              <th>Snapshot</th>
             </tr>
           </thead>
           <tbody>
@@ -121,6 +100,22 @@ export default function ActivityLogs() {
                   >
                     {log.status}
                   </span>
+                </td>
+                <td>
+                  {log.snapshot_url ? (
+                    <a
+                      href={`http://localhost:8000/${log.snapshot_url}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="view-snap-link"
+                    >
+                      <ImageIcon size={18} /> View Snap
+                    </a>
+                  ) : (
+                    <span style={{ color: "#666", fontSize: "12px" }}>
+                      No Image
+                    </span>
+                  )}
                 </td>
               </tr>
             ))}

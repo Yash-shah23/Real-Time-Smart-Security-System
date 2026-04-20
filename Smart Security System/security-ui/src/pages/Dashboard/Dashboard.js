@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
 import {
   LayoutDashboard,
   Camera,
@@ -68,19 +69,9 @@ export default function Dashboard() {
             <Activity size={20} /> <span>Security Logs</span>
           </NavLink>
 
-          <p className="nav-label">Security & Configurations</p>
-          <NavLink to="/dashboard/SOSconfig" className="nav-link-item">
-            <Zap size={20} /> <span>SOS Settings</span>
-          </NavLink>
-          <NavLink to="/dashboard/TwilioConfig" className="nav-link-item">
-            <Settings size={20} /> <span>Cloud Gateway</span>
-          </NavLink>
-
-          <NavLink
-            to="/SupportPage"
-            className="nav-link-item support-nav-item"
-          >
-            <BadgeHelp size={20} /> <span>Help Center</span>
+          <p className="nav-label">Help & Support</p>
+          <NavLink to="/SupportPage" className="nav-link-item" >
+            <BadgeHelp size={20} /> <span>Help center Logs</span>
           </NavLink>
         </nav>
 
@@ -128,7 +119,7 @@ export default function Dashboard() {
                     <Camera size={24} />
                   </div>
                   <div className="stat-data">
-                    <h3>04 / 05</h3>
+                    <h3>01 / 05</h3>
                     <p>Active Streams</p>
                   </div>
                 </div>

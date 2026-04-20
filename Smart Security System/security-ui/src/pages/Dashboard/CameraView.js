@@ -1,7 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { ChevronLeft, ShieldAlert, ShieldCheck } from "lucide-react";
+import {
+  ChevronLeft,
+  ShieldAlert,
+  ShieldCheck,
+  Volume2,
+  VolumeX,
+} from "lucide-react";
 import "./CameraView.css";
 
 export default function CameraView() {
@@ -11,30 +17,26 @@ export default function CameraView() {
   const [camera, setCamera] = useState(null);
   const [status, setStatus] = useState({ intruder: false });
   const [loading, setLoading] = useState(true);
+  const [isArmed, setIsArmed] = useState(false);
 
   const wsRef = useRef(null);
   const wasIntruding = useRef(false);
+  const audioRef = useRef(new Audio("/buzzer.mp3"));
 
-  // 🔊 Buzzer
   const playBuzzer = () => {
-    const audio = new Audio("/buzzer.mp3");
-    audio.play().catch(() => {});
+    audioRef.current.play().catch((err) => console.log("Audio blocked:", err));
   };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const headers = { Authorization: `Bearer ${token}` };
 
-    // 🔹 INITIAL LOAD
     const initNode = async () => {
       try {
         const res = await axios.get(`http://localhost:8000/api/cameras/${id}`, {
           headers,
         });
-        
         setCamera(res.data);
-
-        // initial state
         setStatus({ intruder: res.data.intruder_detected || false });
         wasIntruding.current = res.data.intruder_detected || false;
       } catch (err) {
@@ -43,56 +45,34 @@ export default function CameraView() {
         setLoading(false);
       }
     };
-
     initNode();
 
-    // 🔥 WEBSOCKET CONNECTION
-    const ws = new WebSocket(`ws://localhost:8000/ws/camera/${id}`);
+    const ws = new WebSocket(
+      `ws://localhost:8000/api/cameras/ws/camera/${id}?token=${token}`,
+    );
     wsRef.current = ws;
 
-    ws.onopen = () => {
-      console.log("✅ WebSocket Connected");
-    };
-
     ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
+      const data = JSON.parse(event.data);
+      console.log("WS Data Received:", data); // Check this in F12 Console
 
-        setStatus({ intruder: data.intruder });
+      setStatus({ intruder: data.intruder });
 
-        // 🔊 trigger only once
-        if (data.intruder && !wasIntruding.current) {
-          playBuzzer();
-        }
+      if (data.intruder && isArmed && !wasIntruding.current) {
+        playBuzzer();
+        wasIntruding.current = true;
+      }
 
-        wasIntruding.current = data.intruder;
-      } catch (err) {
-        console.error("WS Parse Error", err);
+      if (!data.intruder) {
+        wasIntruding.current = false;
       }
     };
 
-    ws.onerror = (err) => {
-      console.error("WebSocket error:", err);
-    };
+    return () => ws.close();
+  }, [id, isArmed]);
 
-    ws.onclose = () => {
-      console.log("❌ WebSocket Closed");
-    };
-
-    return () => {
-      ws.close();
-    };
-  }, [id]);
-
-  if (loading)
-    return (
-      <div className="loading-screen">
-        <h2>Initializing Neural Link...</h2>
-        <div className="loader"></div>
-      </div>
-    );
-
-  if (!camera) return <div className="error-screen">Node Not Found</div>;
+  if (loading) return <div className="loading-screen">Loading...</div>;
+  if (!camera) return <div>Camera Not Found</div>;
 
   const zone = camera.zone?.coordinates;
 
@@ -100,13 +80,17 @@ export default function CameraView() {
     <div className="camera-view-root">
       <div className="view-header">
         <button onClick={() => navigate(-1)} className="btn-back">
-          <ChevronLeft size={20} /> Matrix Dashboard
+          <ChevronLeft size={20} /> Dashboard
         </button>
+        <h1>{camera.name}</h1>
 
-        <div className="node-meta">
-          <h1>{camera.name || "Camera Node"}</h1>
-          <p>{camera.location}</p>
-        </div>
+        <button
+          className={`status-badge ${isArmed ? "danger" : "success"}`}
+          onClick={() => setIsArmed(!isArmed)}
+        >
+          {isArmed ? <Volume2 size={20} /> : <VolumeX size={20} />}
+          <span>{isArmed ? "ALARM ARMED" : "ALARM SILENT"}</span>
+        </button>
 
         <div
           className={`status-badge ${status.intruder ? "danger" : "success"}`}
@@ -116,20 +100,16 @@ export default function CameraView() {
           ) : (
             <ShieldCheck size={20} />
           )}
-          <span>{status.intruder ? "CRITICAL BREACH" : "SECURE"}</span>
+          <span>{status.intruder ? "BREACHED" : "SECURE"}</span>
         </div>
       </div>
 
       <div className="viewport">
-        <div className="video-container" style={{ position: "relative" }}>
-          {/* 🔴 FULLSCREEN STREAM */}
+        <div className="video-container">
           <img
-            src={`http://localhost:8000/api/cameras/stream/${id}`}
-            alt="AI Stream"
+            src={`http://localhost:8000/api/cameras/stream/${id}?t=${Date.now()}`}
             className="full-stream-render"
           />
-
-          {/* 🔴 ZONE OVERLAY (FIXED & SCALED) */}
           {zone && (
             <div
               style={{
@@ -138,18 +118,14 @@ export default function CameraView() {
                 top: `${zone.y1 * 100}%`,
                 width: `${(zone.x2 - zone.x1) * 100}%`,
                 height: `${(zone.y2 - zone.y1) * 100}%`,
-                background: "rgba(255, 0, 0, 0.2)",
                 border: "2px solid red",
+                background: status.intruder
+                  ? "rgba(255,0,0,0.3)"
+                  : "rgba(255,0,0,0.1)",
                 pointerEvents: "none",
               }}
             />
           )}
-
-          {/* 🔴 UI OVERLAY */}
-          <div className="overlay-elements">
-            <div className="rec-dot"></div>
-            <span className="timestamp">{new Date().toLocaleString()}</span>
-          </div>
         </div>
       </div>
     </div>
