@@ -5,6 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routes import user_routes, camara_routes 
 from app.config.database import create_indexes
 from app.routes import websocket_routes
+from fastapi.staticfiles import StaticFiles
+
 
 app = FastAPI(
     title="Secure AI API",
@@ -52,3 +54,4 @@ async def startup():
 app.include_router(user_routes.router, prefix="/api/users", tags=["Authentication"])
 app.include_router(camara_routes.router, prefix="/api/cameras", tags=["Camera Feed"])
 app.include_router(websocket_routes.router)
+app.mount("/static", StaticFiles(directory="static"), name="static")
